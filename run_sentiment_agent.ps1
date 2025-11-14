@@ -11,6 +11,14 @@ if (-not (Test-Path $logDir)) {
     New-Item -ItemType Directory -Path $logDir | Out-Null
 }
 
+# If a local virtual environment exists at .venv, prefer its python executable
+$repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$venvPython = Join-Path $repoRoot ".venv\Scripts\python.exe"
+if (Test-Path $venvPython) {
+    $pythonExe = $venvPython
+    Write-Output "Using virtual environment python: $pythonExe" | Tee-Object -FilePath $logPath -Append
+}
+
 # Run the sentiment agent with sample reviews
 $args = @(
     $scriptPath,
